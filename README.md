@@ -1,7 +1,7 @@
-# react-use-global-state
+# react-global-state
 
 ```tsx
-import { createGlobalReducer } from "react-global-state";
+import { createGlobalState, createGlobalReducer } from "react-global-state";
 
 const [
   useCount,
