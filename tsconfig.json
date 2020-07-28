@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
+    "jsx": "react",
+    "lib": ["ES2015", "DOM"],
+    "moduleResolution": "Node",
+    "outDir": "dist/",
+
+    "strict": true,
+    "declaration": true,
+    "sourceMap": true,
+    "stripInternal": true
+  },
+  "files": ["src/index.ts"],
+  "include": ["src/**/*"],
+  "exclude": ["__tests__/**/*"]
+}
