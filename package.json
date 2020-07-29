@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "dev": "microbundle watch",
-    "build": "rm -rf dist && microbundle -f cjs,es",
+    "prepare": "rm -rf dist && microbundle -f cjs,es",
     "test": "jest",
     "test:watch": "jest --watch"
   },
