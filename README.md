@@ -1,7 +1,7 @@
-# react-global-state
+# @zoontek/react-global-state
 
 ```tsx
-import { createGlobalState } from "react-global-state";
+import { createGlobalState } from "@zoontek/react-global-state";
 
 const [
   useCount,
@@ -26,7 +26,7 @@ const Counter = () => {
 ```
 
 ```tsx
-import { createGlobalReducer } from "react-global-state";
+import { createGlobalReducer } from "@zoontek/react-global-state";
 
 type Action = { type: "increment" } | { type: "decrement" };
 

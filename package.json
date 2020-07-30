@@ -1,5 +1,5 @@
 {
-  "name": "react-global-state",
+  "name": "@zoontek/react-global-state",
   "version": "0.1.0",
   "license": "MIT",
   "sideEffects": false,
