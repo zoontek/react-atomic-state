@@ -1,28 +1,20 @@
-import { Dispatch, SetStateAction, useReducer } from "react";
-import { Listener } from "./types";
+import { useReducer } from "react";
+import { GetState, Listener, StateApi } from "./types";
 import { useIsoLayoutEffect } from "./useIsoLayoutEffect";
 
 export function createGlobalState<S>(
   initialState: S,
-): [
-  () => S,
-  {
-    addListener: (listener: Listener<S>) => void;
-    removeAllListeners: () => void;
-    getState: () => S;
-    setState: Dispatch<SetStateAction<S>>;
-  },
-] {
+): [GetState<S>, StateApi<S>] {
   const listeners = new Set<Listener<S>>();
   let state: S = initialState;
 
-  function addListener(listener: Listener<S>) {
+  const addListener: StateApi<S>["addListener"] = (listener: Listener<S>) => {
     listeners.add(listener);
 
     return () => {
       listeners.delete(listener);
     };
-  }
+  };
 
   return [
     function useGlobalState() {
