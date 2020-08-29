@@ -1,53 +1,27 @@
 # @zoontek/react-global-state
 
 ```tsx
-import { createGlobalState } from "@zoontek/react-global-state";
+// ./states/count.ts
+import { createState, createHook } from "@zoontek/react-global-state";
 
-const [
-  useCount,
-  { getState, setState, addListener, removeAllListeners },
-] = createGlobalState(0);
+const count = createState(0);
 
-const decrement = () => setState((prevState) => prevState - 1);
-const increment = () => setState((prevState) => prevState + 1);
+const {
+  addListener,
+  removeAllListeners,
+  getValue,
+  setValue,
+  resetValue,
+} = count;
 
-const Counter = () => {
-  const count = useCount();
+export const useCount = createHook(count);
 
-  return (
-    <div>
-      <span>count: {count}</span>
-
-      <button onClick={decrement}>-1</button>
-      <button onClick={increment}>+1</button>
-    </div>
-  );
-};
+export const decrement = () => setValue((prevState) => prevState - 1);
+export const increment = () => setValue((prevState) => prevState + 1);
 ```
 
 ```tsx
-import { createGlobalReducer } from "@zoontek/react-global-state";
-
-type Action = { type: "increment" } | { type: "decrement" };
-
-const reducer = (state: number, action: Action): number => {
-  switch (action.type) {
-    case "increment":
-      return state + 1;
-    case "decrement":
-      return state - 1;
-    default:
-      return state;
-  }
-};
-
-const [
-  useCount,
-  { getState, dispatch, addListener, removeAllListeners },
-] = createGlobalReducer(reducer, 0);
-
-const decrement = () => dispatch({ type: "decrement" });
-const increment = () => dispatch({ type: "increment" });
+import { decrement, increment, useCount } from "./states/count.ts";
 
 const Counter = () => {
   const count = useCount();
