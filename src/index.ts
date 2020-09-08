@@ -57,7 +57,10 @@ export function createState<S>(initialState: S): StateApi<S> {
 
 // For SSR / React Native: https://github.com/react-spring/zustand/pull/34
 const useIsoLayoutEffect =
-  typeof window === "undefined" ? useEffect : useLayoutEffect;
+  typeof window !== "undefined" &&
+  !/ServerSideRendering/.test(window.navigator && window.navigator.userAgent)
+    ? useLayoutEffect
+    : useEffect;
 
 export function createHook<S>(state: StateApi<S>): GetValue<S> {
   return function useGlobalState() {
