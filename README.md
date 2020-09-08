@@ -1,5 +1,9 @@
 # @zoontek/react-global-state
 
+Simple & minimalistic React global state that works.
+
+[![bundlephobia](https://badgen.net/bundlephobia/minzip/@zoontek/react-global-state)](https://bundlephobia.com/result?p=@zoontek/react-global-state) [![npm version](https://badge.fury.io/js/%40zoontek%2Freact-global-state.svg)](https://www.npmjs.com/package/@zoontek/react-global-state) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+
 ```tsx
 // ./states/count.ts
 import { createState, createHook } from "@zoontek/react-global-state";
