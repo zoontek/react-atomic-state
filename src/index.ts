@@ -1,38 +1,21 @@
 import { useEffect, useLayoutEffect, useReducer, useRef } from "react";
 
-export type EqualityFn<T> = (value: T, newValue: unknown) => boolean;
-export type Listener<T> = (value: T) => void;
-export type Selector<T, S> = (value: T) => S;
+export type StateListener<S> = (value: S) => void;
+export type StateSelector<S, D> = (value: S) => D;
 
-export type Atom<T> = {
-  get: () => T;
-  set: (value: T | ((prevValue: T) => T)) => void;
-  subscribe: (listener: Listener<T>) => () => void;
-  reset: () => void;
+export type StateApi<S> = {
+  getValue: () => S;
+  setValue: (value: S | ((prevState: S) => S)) => void;
+  resetValue: () => void;
+  addListener: (listener: StateListener<S>) => () => void;
 };
 
-export function atom<T>(initialValue: T): Atom<T> {
-  const listeners = new Set<Listener<T>>();
-  let currentValue: T = initialValue;
+export function createState<S>(initialState: S): StateApi<S> {
+  const listeners = new Set<StateListener<S>>();
+  let currentState: S = initialState;
 
   return {
-    get(): ReturnType<Atom<T>["get"]> {
-      return currentValue;
-    },
-
-    set(value): ReturnType<Atom<T>["set"]> {
-      const nextValue =
-        typeof value === "function"
-          ? (value as (prevValue: T) => T)(currentValue)
-          : value;
-
-      if (!Object.is(currentValue, nextValue)) {
-        currentValue = nextValue;
-        listeners.forEach((listener) => listener(currentValue));
-      }
-    },
-
-    subscribe(listener): ReturnType<Atom<T>["subscribe"]> {
+    addListener(listener): ReturnType<StateApi<S>["addListener"]> {
       listeners.add(listener);
 
       return () => {
@@ -40,10 +23,26 @@ export function atom<T>(initialValue: T): Atom<T> {
       };
     },
 
-    reset(): ReturnType<Atom<T>["reset"]> {
-      if (!Object.is(currentValue, initialValue)) {
-        currentValue = initialValue;
-        listeners.forEach((listener) => listener(currentValue));
+    getValue(): ReturnType<StateApi<S>["getValue"]> {
+      return currentState;
+    },
+
+    setValue(value): ReturnType<StateApi<S>["setValue"]> {
+      const nextValue =
+        typeof value === "function"
+          ? (value as (prevState: S) => S)(currentState)
+          : value;
+
+      if (!Object.is(currentState, nextValue)) {
+        currentState = nextValue;
+        listeners.forEach((listener) => listener(currentState));
+      }
+    },
+
+    resetValue(): ReturnType<StateApi<S>["resetValue"]> {
+      if (!Object.is(currentState, initialState)) {
+        currentState = initialState;
+        listeners.forEach((listener) => listener(currentState));
       }
     },
   };
@@ -57,66 +56,66 @@ function identity<T>(value: T): T {
   return value;
 }
 
-export function hook<T, D>(
-  atom: Atom<T>,
-  selector: Selector<T, D> = identity as any,
+export function createHook<S, D>(
+  api: StateApi<S>,
+  selector: StateSelector<S, D> = identity as any,
 ) {
-  return function useAtom() {
+  return function useGlobalState() {
     const [, forceUpdate] = useReducer(() => [], []);
 
-    const value = atom.get();
+    const state = api.getValue();
 
-    const valueRef = useRef(value);
+    const stateRef = useRef(state);
     const selectorRef = useRef(selector);
     const erroredRef = useRef(false);
-    const currentDerivedValueRef = useRef<D>();
+    const currentDerivedStateRef = useRef<D>();
 
-    if (currentDerivedValueRef.current === undefined) {
-      currentDerivedValueRef.current = selector(value);
+    if (currentDerivedStateRef.current === undefined) {
+      currentDerivedStateRef.current = selector(state);
     }
 
-    let newDerivedValue: D | undefined;
-    let hasNewDerivedValue = false;
+    let newDerivedState: D | undefined;
+    let hasNewDerivedState = false;
 
     // The selector need to be called during the render phase if it change.
     // We also want legitimate errors to be visible so we re-run them if
     // they errored in the subscriber.
     if (
-      valueRef.current !== value ||
+      stateRef.current !== state ||
       selectorRef.current !== selector ||
       erroredRef.current
     ) {
       // Using local variables to avoid mutations in the render phase.
-      newDerivedValue = selector(value);
-      hasNewDerivedValue = !Object.is(
-        currentDerivedValueRef.current as D,
-        newDerivedValue,
+      newDerivedState = selector(state);
+      hasNewDerivedState = !Object.is(
+        currentDerivedStateRef.current as D,
+        newDerivedState,
       );
     }
 
     // Syncing changes in useEffect.
     useIsoLayoutEffect(() => {
-      if (hasNewDerivedValue) {
-        currentDerivedValueRef.current = newDerivedValue as D;
+      if (hasNewDerivedState) {
+        currentDerivedStateRef.current = newDerivedState as D;
       }
 
-      valueRef.current = value;
+      stateRef.current = state;
       erroredRef.current = false;
     });
 
-    const valueBeforeSubscriptionRef = useRef(value);
+    const valueBeforeSubscriptionRef = useRef(state);
 
     useEffect(() => {
       const listener = () => {
         try {
-          const nextValue = atom.get();
+          const nextValue = api.getValue();
           const nextDerivedValue = selectorRef.current(nextValue);
 
           if (
-            !Object.is(currentDerivedValueRef.current as D, nextDerivedValue)
+            !Object.is(currentDerivedStateRef.current as D, nextDerivedValue)
           ) {
-            valueRef.current = nextValue;
-            currentDerivedValueRef.current = nextDerivedValue;
+            stateRef.current = nextValue;
+            currentDerivedStateRef.current = nextDerivedValue;
             forceUpdate();
           }
         } catch (error) {
@@ -125,17 +124,17 @@ export function hook<T, D>(
         }
       };
 
-      const unsubscribe = atom.subscribe(listener);
+      const unsubscribe = api.addListener(listener);
 
-      if (atom.get() !== valueBeforeSubscriptionRef.current) {
+      if (api.getValue() !== valueBeforeSubscriptionRef.current) {
         listener(); // value has changed before subscription
       }
 
       return unsubscribe;
     }, []);
 
-    return hasNewDerivedValue
-      ? (newDerivedValue as D)
-      : currentDerivedValueRef.current;
+    return hasNewDerivedState
+      ? (newDerivedState as D)
+      : currentDerivedStateRef.current;
   };
 }

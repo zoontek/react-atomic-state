@@ -1,28 +1,28 @@
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { atom, hook } from "../src";
+import { createState, createHook } from "../src";
 
 afterEach(cleanup);
 
 it("creates a state hook and api object", () => {
-  const output = atom(null);
+  const output = createState(null);
 
   expect(output).toMatchInlineSnapshot(`
     Object {
-      "get": [Function],
-      "reset": [Function],
-      "set": [Function],
-      "subscribe": [Function],
+      "addListener": [Function],
+      "getValue": [Function],
+      "resetValue": [Function],
+      "setValue": [Function],
     }
   `);
 });
 
 it("uses the state with no args", async () => {
-  const countAtom = atom(0);
-  const useCount = hook(countAtom);
+  const countApi = createState(0);
+  const useCount = createHook(countApi);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
+  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -39,10 +39,10 @@ it("uses the state with no args", async () => {
 });
 
 it("only re-renders if selected state has changed", async () => {
-  const countAtom = atom(0);
-  const useCount = hook(countAtom);
+  const countApi = createState(0);
+  const useCount = createHook(countApi);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
+  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
 
   let counterRenderCount = 0;
   let controlRenderCount = 0;
@@ -73,10 +73,10 @@ it("only re-renders if selected state has changed", async () => {
 });
 
 it("can batch updates", async () => {
-  const countAtom = atom(0);
-  const useCount = hook(countAtom);
+  const countApi = createState(0);
+  const useCount = createHook(countApi);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
+  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -96,10 +96,10 @@ it("can batch updates", async () => {
 });
 
 it("can be reset", async () => {
-  const countAtom = atom(0);
-  const useCount = hook(countAtom);
+  const countApi = createState(0);
+  const useCount = createHook(countApi);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
+  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -108,7 +108,7 @@ it("can be reset", async () => {
       <>
         <div>count: {count}</div>
         <button onClick={increment}>increment</button>
-        <button onClick={countAtom.reset}>reset</button>
+        <button onClick={countApi.resetValue}>reset</button>
       </>
     );
   };
@@ -123,16 +123,20 @@ it("can be reset", async () => {
 });
 
 it("can be derived", async () => {
-  const countObjectAtom = atom({ count: 0 });
+  const countObjectApi = createState({ count: 0 });
 
-  const useCount = hook(countObjectAtom, (countObject) => countObject.count);
-  const useCountPlusOne = hook(
-    countObjectAtom,
+  const useCount = createHook(
+    countObjectApi,
+    (countObject) => countObject.count,
+  );
+
+  const useCountPlusOne = createHook(
+    countObjectApi,
     (countObject) => countObject.count + 1,
   );
 
   const increment = () =>
-    countObjectAtom.set((prevCountObject) => ({
+    countObjectApi.setValue((prevCountObject) => ({
       ...prevCountObject,
       count: prevCountObject.count + 1,
     }));
