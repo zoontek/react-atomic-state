@@ -20,22 +20,15 @@ TODO
 
 ```tsx
 // states/count.ts
-import { createState, createHook } from "@zoontek/react-global-state";
+import { atom, hook } from "@zoontek/react-global-state";
 
-const count = createState(0);
+const count = atom(0);
 
-const {
-  addListener,
-  removeAllListeners,
-  getValue,
-  setValue,
-  resetValue,
-} = count;
+export const useCount = hook(count);
+export const useCountPlusOne = hook(count, (count) => count + 1); // you can derive values
 
-export const useCount = createHook(count);
-
-export const decrement = () => setValue((prevState) => prevState - 1);
-export const increment = () => setValue((prevState) => prevState + 1);
+export const decrement = () => count.set((prevCount) => prevCount - 1);
+export const increment = () => count.set((prevCount) => prevCount + 1);
 ```
 
 ```tsx
