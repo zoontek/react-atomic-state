@@ -11,9 +11,9 @@ it("creates a state hook and api object", () => {
   expect(output).toMatchInlineSnapshot(`
     Object {
       "addListener": [Function],
-      "getValue": [Function],
-      "resetValue": [Function],
-      "setValue": [Function],
+      "getState": [Function],
+      "resetState": [Function],
+      "setState": [Function],
     }
   `);
 });
@@ -22,7 +22,7 @@ it("uses the state with no args", async () => {
   const countApi = createState(0);
   const useCount = createHook(countApi);
 
-  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
+  const increment = () => countApi.setState((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -42,7 +42,7 @@ it("only re-renders if selected state has changed", async () => {
   const countApi = createState(0);
   const useCount = createHook(countApi);
 
-  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
+  const increment = () => countApi.setState((prevCount) => prevCount + 1);
 
   let counterRenderCount = 0;
   let controlRenderCount = 0;
@@ -76,7 +76,7 @@ it("can batch updates", async () => {
   const countApi = createState(0);
   const useCount = createHook(countApi);
 
-  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
+  const increment = () => countApi.setState((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -99,7 +99,7 @@ it("can be reset", async () => {
   const countApi = createState(0);
   const useCount = createHook(countApi);
 
-  const increment = () => countApi.setValue((prevCount) => prevCount + 1);
+  const increment = () => countApi.setState((prevCount) => prevCount + 1);
 
   const Counter = () => {
     const count = useCount();
@@ -108,7 +108,7 @@ it("can be reset", async () => {
       <>
         <div>count: {count}</div>
         <button onClick={increment}>increment</button>
-        <button onClick={countApi.resetValue}>reset</button>
+        <button onClick={countApi.resetState}>reset</button>
       </>
     );
   };
@@ -136,7 +136,7 @@ it("can be derived", async () => {
   );
 
   const increment = () =>
-    countObjectApi.setValue((prevCountObject) => ({
+    countObjectApi.setState((prevCountObject) => ({
       ...prevCountObject,
       count: prevCountObject.count + 1,
     }));

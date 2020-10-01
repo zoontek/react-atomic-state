@@ -1,13 +1,13 @@
 import { useEffect, useLayoutEffect, useReducer, useRef } from "react";
 
-export type StateListener<S> = (value: S) => void;
-export type StateSelector<S, D> = (value: S) => D;
+export type StateListener<S> = (state: S) => void;
+export type StateSelector<S, D> = (state: S) => D;
 
 export type StateApi<S> = {
-  getValue: () => S;
-  setValue: (value: S | ((prevState: S) => S)) => void;
-  resetValue: () => void;
   addListener: (listener: StateListener<S>) => () => void;
+  getState: () => S;
+  setState: (value: S | ((prevState: S) => S)) => void;
+  resetState: () => void;
 };
 
 export function createState<S>(initialState: S): StateApi<S> {
@@ -23,23 +23,23 @@ export function createState<S>(initialState: S): StateApi<S> {
       };
     },
 
-    getValue(): ReturnType<StateApi<S>["getValue"]> {
+    getState(): ReturnType<StateApi<S>["getState"]> {
       return currentState;
     },
 
-    setValue(value): ReturnType<StateApi<S>["setValue"]> {
-      const nextValue =
+    setState(value): ReturnType<StateApi<S>["setState"]> {
+      const nextState =
         typeof value === "function"
           ? (value as (prevState: S) => S)(currentState)
           : value;
 
-      if (!Object.is(currentState, nextValue)) {
-        currentState = nextValue;
+      if (!Object.is(currentState, nextState)) {
+        currentState = nextState;
         listeners.forEach((listener) => listener(currentState));
       }
     },
 
-    resetValue(): ReturnType<StateApi<S>["resetValue"]> {
+    resetState(): ReturnType<StateApi<S>["resetState"]> {
       if (!Object.is(currentState, initialState)) {
         currentState = initialState;
         listeners.forEach((listener) => listener(currentState));
@@ -63,7 +63,7 @@ export function createHook<S, D>(
   return function useGlobalState() {
     const [, forceUpdate] = useReducer(() => [], []);
 
-    const state = api.getValue();
+    const state = api.getState();
 
     const stateRef = useRef(state);
     const selectorRef = useRef(selector);
@@ -103,19 +103,19 @@ export function createHook<S, D>(
       erroredRef.current = false;
     });
 
-    const valueBeforeSubscriptionRef = useRef(state);
+    const stateBeforeSubscriptionRef = useRef(state);
 
     useEffect(() => {
       const listener = () => {
         try {
-          const nextValue = api.getValue();
-          const nextDerivedValue = selectorRef.current(nextValue);
+          const nextState = api.getState();
+          const nextDerivedState = selectorRef.current(nextState);
 
           if (
-            !Object.is(currentDerivedStateRef.current as D, nextDerivedValue)
+            !Object.is(currentDerivedStateRef.current as D, nextDerivedState)
           ) {
-            stateRef.current = nextValue;
-            currentDerivedStateRef.current = nextDerivedValue;
+            stateRef.current = nextState;
+            currentDerivedStateRef.current = nextDerivedState;
             forceUpdate();
           }
         } catch (error) {
@@ -126,8 +126,8 @@ export function createHook<S, D>(
 
       const unsubscribe = api.addListener(listener);
 
-      if (api.getValue() !== valueBeforeSubscriptionRef.current) {
-        listener(); // value has changed before subscription
+      if (api.getState() !== stateBeforeSubscriptionRef.current) {
+        listener(); // state has changed before subscription
       }
 
       return unsubscribe;
