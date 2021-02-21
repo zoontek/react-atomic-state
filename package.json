@@ -1,6 +1,6 @@
 {
   "name": "react-atomic-state",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -27,11 +27,13 @@
     "zustand"
   ],
   "scripts": {
+    "build": "yarn clean && microbundle -f cjs,es",
+    "clean": "rm -rf dist",
     "dev": "microbundle watch",
     "format": "prettier '**/*.{js,md,ts,tsx}' --write",
-    "prepare": "rm -rf dist && microbundle -f cjs,es",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "prepare": "yarn test && yarn build"
   },
   "prettier": {
     "trailingComma": "all"
