@@ -14,7 +14,8 @@ $ yarn add react-atomic-state
 
 ## ❓Motivation
 
-I'm a huge fan of the "state and props" couple, but sometimes I need to share a simple value to my entire application. I don't really like the `Context` API and existing global state management libraries (overkill to me most of the times: state must be an object, selectors, etc.), so I decided to publish this small library to cover this specific need ✨.
+I'm a huge fan of the "state and props" couple, but sometimes I need to share a simple value to my entire application.<br />
+I don't really like the `Context` API and existing global state management libraries (overkill to me most of the times: state must be an object, you have to deal with selectors, etc.), so I decided to publish this small library to cover this specific need 🙌.
 
 ## Usage
 
