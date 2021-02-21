@@ -1,44 +1,40 @@
-# @zoontek/react-global-state
+# ⚛️ react-atomic-state
 
-[![bundlephobia](https://badgen.net/bundlephobia/minzip/@zoontek/react-global-state)](https://bundlephobia.com/result?p=@zoontek/react-global-state) [![npm version](https://badge.fury.io/js/%40zoontek%2Freact-global-state.svg)](https://www.npmjs.com/package/@zoontek/react-global-state) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+[![bundlephobia](https://badgen.net/bundlephobia/minzip/react-atomic-state)](https://bundlephobia.com/result?p=react-atomic-state) [![npm version](https://badge.fury.io/js/react-atomic-state.svg)](https://www.npmjs.com/package/react-atomic-state) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Simple & minimalistic React global state management that works.
+Dead simple React global state management based on [`use-subscription`](https://github.com/facebook/react/tree/master/packages/use-subscription).
 
 ## Installation
 
 ```bash
-$ npm install --save @zoontek/react-global-state
+$ npm install --save react-atomic-state
 # --- or ---
-$ yarn add @zoontek/react-global-state
+$ yarn add react-atomic-state
 ```
 
-## Motivation
+## ❓Motivation
 
-TODO
+I'm a huge fan of the "state and props" couple, but sometimes I need to share a simple value to my entire application.
+
+I don't like `Context` API and existing global state management libraries (overkill to me most of the times: state must be an object, selectors, etc.), so I decided to publish this small library to cover my needs ✨.
 
 ## Usage
 
 ```tsx
 // states/count.ts
-import { createState, createHook } from "@zoontek/react-global-state";
+import { atom, useAtom } from "react-atomic-state";
 
-const count = createState(0);
+const count = atom(0);
 
-const {
-  // State API
-  addListener,
-  getState,
-  setState,
-  resetState,
-} = count;
+export const decrement = () => count.set((prevCount) => prevCount - 1);
+export const increment = () => count.set((prevCount) => prevCount + 1);
 
-export const useCount = createHook(count);
+const unsubscribe = count.subscribe((value) => {
+  console.log(value); // log every update
+});
 
-// You can derive values using the second argument
-export const useCountPlusOne = createHook(count, (count) => count + 1);
-
-export const decrement = () => setState((prevState) => prevState - 1);
-export const increment = () => setState((prevState) => prevState + 1);
+// create a custom hook
+export const useCount = () => useAtom(count);
 ```
 
 ```tsx
@@ -56,4 +52,25 @@ const Counter = () => {
     </div>
   );
 };
+```
+
+## API
+
+### atom()
+
+```ts
+type atom = <Value>(
+  initialValue: Value,
+) => {
+  get: () => Value;
+  set: (value: Value | ((prevValue: Value) => Value)) => void;
+  subscribe: (callback: (value: Value) => void) => () => void;
+  reset: () => void;
+};
+```
+
+### useAtom()
+
+```ts
+type useAtom = <Value>(atom: Atom<Value>) => Value;
 ```

@@ -1,31 +1,30 @@
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { createState, createHook } from "../src";
+import { atom, useAtom } from "../src";
 
 afterEach(cleanup);
 
-it("creates a state hook and api object", () => {
-  const output = createState(null);
+it("matches existing api", () => {
+  const output = atom(null);
 
   expect(output).toMatchInlineSnapshot(`
     Object {
-      "addListener": [Function],
-      "getState": [Function],
-      "resetState": [Function],
-      "setState": [Function],
+      "get": [Function],
+      "reset": [Function],
+      "set": [Function],
+      "subscribe": [Function],
     }
   `);
 });
 
-it("uses the state with no args", async () => {
-  const countApi = createState(0);
-  const useCount = createHook(countApi);
+it("performs a basic example", async () => {
+  const countAtom = atom(0);
 
-  const increment = () => countApi.setState((prevCount) => prevCount + 1);
+  const increment = () => countAtom.set((prevCount) => prevCount + 1);
 
   const Counter = () => {
-    const count = useCount();
+    const count = useAtom(countAtom);
 
     React.useEffect(() => {
       increment();
@@ -38,17 +37,16 @@ it("uses the state with no args", async () => {
   await findByText("count: 1");
 });
 
-it("only re-renders if selected state has changed", async () => {
-  const countApi = createState(0);
-  const useCount = createHook(countApi);
+it("only re-renders if value has changed", async () => {
+  const countAtom = atom(0);
 
-  const increment = () => countApi.setState((prevCount) => prevCount + 1);
+  const increment = () => countAtom.set((prevCount) => prevCount + 1);
 
   let counterRenderCount = 0;
   let controlRenderCount = 0;
 
   const Counter = () => {
-    const count = useCount();
+    const count = useAtom(countAtom);
     counterRenderCount++;
     return <div>count: {count}</div>;
   };
@@ -72,43 +70,19 @@ it("only re-renders if selected state has changed", async () => {
   expect(controlRenderCount).toBe(1);
 });
 
-it("can batch updates", async () => {
-  const countApi = createState(0);
-  const useCount = createHook(countApi);
-
-  const increment = () => countApi.setState((prevCount) => prevCount + 1);
-
-  const Counter = () => {
-    const count = useCount();
-
-    React.useEffect(() => {
-      ReactDOM.unstable_batchedUpdates(() => {
-        increment();
-        increment();
-      });
-    }, []);
-
-    return <div>count: {count}</div>;
-  };
-
-  const { findByText } = render(<Counter />);
-  await findByText("count: 2");
-});
-
 it("can be reset", async () => {
-  const countApi = createState(0);
-  const useCount = createHook(countApi);
+  const countAtom = atom(0);
 
-  const increment = () => countApi.setState((prevCount) => prevCount + 1);
+  const increment = () => countAtom.set((prevCount) => prevCount + 1);
 
   const Counter = () => {
-    const count = useCount();
+    const count = useAtom(countAtom);
 
     return (
       <>
         <div>count: {count}</div>
         <button onClick={increment}>increment</button>
-        <button onClick={countApi.resetState}>reset</button>
+        <button onClick={countAtom.reset}>reset</button>
       </>
     );
   };
@@ -122,42 +96,24 @@ it("can be reset", async () => {
   await findByText("count: 0");
 });
 
-it("can be derived", async () => {
-  const countObjectApi = createState({ count: 0 });
+it("can batch updates", async () => {
+  const countAtom = atom(0);
 
-  const useCount = createHook(
-    countObjectApi,
-    (countObject) => countObject.count,
-  );
-
-  const useCountPlusOne = createHook(
-    countObjectApi,
-    (countObject) => countObject.count + 1,
-  );
-
-  const increment = () =>
-    countObjectApi.setState((prevCountObject) => ({
-      ...prevCountObject,
-      count: prevCountObject.count + 1,
-    }));
+  const increment = () => countAtom.set((prevCount) => prevCount + 1);
 
   const Counter = () => {
-    const count = useCount();
-    const countPlusOne = useCountPlusOne();
+    const count = useAtom(countAtom);
 
     React.useEffect(() => {
-      increment();
+      ReactDOM.unstable_batchedUpdates(() => {
+        increment();
+        increment();
+      });
     }, []);
 
-    return (
-      <>
-        <div>count: {count}</div>
-        <div>countPlusOne: {countPlusOne}</div>
-      </>
-    );
+    return <div>count: {count}</div>;
   };
 
   const { findByText } = render(<Counter />);
-  await findByText("count: 1");
-  await findByText("countPlusOne: 2");
+  await findByText("count: 2");
 });
