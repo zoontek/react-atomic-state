@@ -3,9 +3,9 @@ import { useSubscription } from "use-subscription";
 
 export type Atom<Value> = {
   get: () => Value;
-  reset: () => void;
   set: (value: Value | ((prevValue: Value) => Value)) => void;
   subscribe: (callback: (value: Value) => void) => () => void;
+  reset: () => void;
 };
 
 export function atom<Value>(initialValue: Value): Atom<Value> {
@@ -13,40 +13,35 @@ export function atom<Value>(initialValue: Value): Atom<Value> {
   let currentValue: Value = initialValue;
 
   return {
-    get(): ReturnType<Atom<Value>["get"]> {
+    get() {
       return currentValue;
     },
 
-    reset(): ReturnType<Atom<Value>["reset"]> {
-      if (!Object.is(currentValue, initialValue)) {
-        currentValue = initialValue;
-        callbacks.forEach((callback) => callback(currentValue));
-      }
-    },
-
-    set(value): ReturnType<Atom<Value>["set"]> {
-      const nextValue =
+    set(value) {
+      currentValue =
         typeof value === "function"
           ? (value as (prevValue: Value) => Value)(currentValue)
           : value;
 
-      if (!Object.is(currentValue, nextValue)) {
-        currentValue = nextValue;
-        callbacks.forEach((callback) => callback(currentValue));
-      }
+      callbacks.forEach((callback) => callback(currentValue));
     },
 
-    subscribe(callback): ReturnType<Atom<Value>["subscribe"]> {
+    subscribe(callback) {
       callbacks.add(callback);
 
       return () => {
         callbacks.delete(callback);
       };
     },
+
+    reset() {
+      currentValue = initialValue;
+      callbacks.forEach((callback) => callback(currentValue));
+    },
   };
 }
 
-export function useAtom<Value>(atom: Atom<Value>) {
+export function useAtom<Value>(atom: Atom<Value>): Value {
   const subscription = useMemo(
     () => ({
       getCurrentValue() {
