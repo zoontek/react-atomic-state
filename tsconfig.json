@@ -1,4 +1,5 @@
 {
+  "include": ["src/**/*"],
   "compilerOptions": {
     "target": "ES2015",
     "module": "ES2015",
@@ -11,8 +12,5 @@
     "declaration": true,
     "sourceMap": true,
     "stripInternal": true
-  },
-  "files": ["src/index.ts"],
-  "include": ["src/**/*"],
-  "exclude": ["__tests__/**/*"]
+  }
 }
