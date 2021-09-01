@@ -1,6 +1,6 @@
 {
   "name": "react-atomic-state",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "description": "Dead simple React global state management based on use-subscription",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
