@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-import { useSubscription } from "use-subscription";
+import { useSyncExternalStore } from "use-sync-external-store/shim";
 
 export type Atom<Value> = {
   get: () => Value;
@@ -42,18 +41,5 @@ export function atom<Value>(initialValue: Value): Atom<Value> {
 }
 
 export function useAtom<Value>(atom: Atom<Value>): Value {
-  const subscription = useMemo(
-    () => ({
-      getCurrentValue() {
-        return atom.get();
-      },
-      subscribe(callback: (value: Value) => void) {
-        const unsubscribe = atom.subscribe(callback);
-        return unsubscribe;
-      },
-    }),
-    [atom],
-  );
-
-  return useSubscription(subscription);
+  return useSyncExternalStore(atom.subscribe, atom.get);
 }
