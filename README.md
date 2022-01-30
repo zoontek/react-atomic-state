@@ -2,7 +2,7 @@
 
 [![bundlephobia](https://badgen.net/bundlephobia/minzip/react-atomic-state)](https://bundlephobia.com/result?p=react-atomic-state) [![npm version](https://badge.fury.io/js/react-atomic-state.svg)](https://www.npmjs.com/package/react-atomic-state) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Dead simple React global state management based on [`use-subscription`](https://github.com/facebook/react/tree/master/packages/use-subscription).
+Dead simple React global state management based on [`use-sync-external-store`](https://github.com/facebook/react/tree/master/packages/use-sync-external-store).
 
 ## Installation
 
@@ -58,9 +58,7 @@ const Counter = () => {
 ### atom()
 
 ```ts
-type atom = <Value>(
-  initialValue: Value,
-) => {
+type atom = <Value>(initialValue: Value) => {
   get: () => Value;
   set: (value: Value | ((prevValue: Value) => Value)) => void;
   subscribe: (callback: (value: Value) => void) => () => void;
