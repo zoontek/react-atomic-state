@@ -53,7 +53,7 @@ it("only re-renders if value has changed", async () => {
   expect(renderCount).toBe(2);
 });
 
-it("can be reset", async () => {
+it("resets correctly", async () => {
   const countAtom = atom(0);
 
   const Counter = () => {
@@ -85,7 +85,7 @@ it("can be reset", async () => {
   await findByText("count: 0");
 });
 
-it("can batch updates", async () => {
+it("batches updates", async () => {
   const countAtom = atom(0);
 
   const Counter = () => {
