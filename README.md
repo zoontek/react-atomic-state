@@ -34,6 +34,10 @@ const unsubscribe = count.subscribe((value) => {
 
 // create a custom hook
 export const useCount = () => useAtom(count);
+
+// create a custom hook with selector
+export const useStringCount = () =>
+  useAtomWithSelector(count, (count) => count.toString());
 ```
 
 ```tsx
@@ -69,5 +73,18 @@ type atom = <Value>(initialValue: Value) => {
 ### useAtom()
 
 ```ts
-type useAtom = <Value>(atom: Atom<Value>) => Value;
+type useAtom = <Value>(
+  atom: Atom<Value>,
+  isEqual?: (prevValue: Value, nextValue: Value) => boolean,
+) => Value;
+```
+
+### useAtomWithSelector()
+
+```ts
+type useAtom = <Value, Selection>(
+  atom: Atom<Value>,
+  selector: (value: Value) => Selection,
+  isEqual?: (prevSelection: Selection, nextSelection: Selection) => boolean,
+) => Value;
 ```
