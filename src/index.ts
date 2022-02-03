@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 
 export type Atom<Value> = {
   get: () => Value;
@@ -42,4 +43,21 @@ export function atom<Value>(initialValue: Value): Atom<Value> {
 
 export function useAtom<Value>(atom: Atom<Value>): Value {
   return useSyncExternalStore(atom.subscribe, atom.get);
+}
+
+export function useAtomWithSelector<Value, Selection>(
+  atom: Atom<Value>,
+  selector: (value: Value) => Selection,
+  isEqual: (
+    selectionA: Selection,
+    selectionB: Selection,
+  ) => boolean = Object.is,
+): Selection {
+  return useSyncExternalStoreWithSelector(
+    atom.subscribe,
+    atom.get,
+    undefined,
+    selector,
+    isEqual,
+  );
 }
