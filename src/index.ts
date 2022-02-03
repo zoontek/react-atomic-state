@@ -49,8 +49,8 @@ export function useAtomWithSelector<Value, Selection>(
   atom: Atom<Value>,
   selector: (value: Value) => Selection,
   isEqual: (
-    selectionA: Selection,
-    selectionB: Selection,
+    prevSelection: Selection,
+    nextSelection: Selection,
   ) => boolean = Object.is,
 ): Selection {
   return useSyncExternalStoreWithSelector(
