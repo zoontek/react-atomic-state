@@ -5,19 +5,6 @@ import { atom, useAtom } from "../src";
 
 afterEach(cleanup);
 
-it("matches existing api", () => {
-  const output = atom(null);
-
-  expect(output).toMatchInlineSnapshot(`
-    Object {
-      "get": [Function],
-      "reset": [Function],
-      "set": [Function],
-      "subscribe": [Function],
-    }
-  `);
-});
-
 it("performs a basic example", async () => {
   const countAtom = atom(0);
 
