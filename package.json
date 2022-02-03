@@ -1,6 +1,6 @@
 {
   "name": "react-atomic-state",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "license": "MIT",
   "description": "Dead simple React global state management based on use-sync-external-store",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -45,13 +45,13 @@
     "use-sync-external-store": "1.0.0-rc.0 || ^1.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.12",
+    "@babel/core": "^7.17.0",
     "@babel/plugin-transform-react-jsx": "^7.16.7",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.4.0",
-    "@types/react": "^17.0.38",
+    "@types/react": "^17.0.39",
     "@types/use-sync-external-store": "^0.0.3",
     "babel-jest": "^27.4.6",
     "jest": "^27.4.7",
