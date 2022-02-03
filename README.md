@@ -21,7 +21,7 @@ I don't like the `Context` API and existing global state management libraries (o
 
 ```tsx
 // states/count.ts
-import { atom, useAtom } from "react-atomic-state";
+import { atom, useAtom, useAtomWithSelector } from "react-atomic-state";
 
 const count = atom(0);
 
