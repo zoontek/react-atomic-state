@@ -27,33 +27,27 @@ it("only re-renders if value has changed", async () => {
   let renderCount = 0;
 
   const Counter = () => {
-    const count = useAtom(countAtom);
+    useAtom(countAtom);
     renderCount++;
 
     return (
-      <>
-        <div>count: {count}</div>
-
-        <button
-          onClick={() => {
-            countAtom.set((prevCount) => prevCount + 1);
-          }}
-        >
-          button
-        </button>
-      </>
+      <button
+        onClick={() => {
+          countAtom.set((prevCount) => prevCount + 1);
+        }}
+      >
+        increment
+      </button>
     );
   };
 
-  const { getByText, findByText } = render(<Counter />);
+  const { getByText } = render(<Counter />);
 
-  fireEvent.click(getByText("button"));
-  await findByText("count: 1");
-
+  fireEvent.click(getByText("increment"));
   expect(renderCount).toBe(2);
 });
 
-it("resets correctly", async () => {
+it("can reset correctly", async () => {
   const countAtom = atom(0);
 
   const Counter = () => {
@@ -85,7 +79,7 @@ it("resets correctly", async () => {
   await findByText("count: 0");
 });
 
-it("batches updates", async () => {
+it("can batch updates", async () => {
   const countAtom = atom(0);
 
   const Counter = () => {
@@ -103,4 +97,74 @@ it("batches updates", async () => {
 
   const { findByText } = render(<Counter />);
   await findByText("count: 2");
+});
+
+it("re-renders when no custom isEqual is provided (because of different object instances)", async () => {
+  const profileAtom = atom({
+    firstName: "Mathieu",
+    lastName: "Acthernoene",
+  });
+
+  let renderCount = 0;
+
+  const Counter = () => {
+    useAtom(profileAtom);
+    renderCount++;
+
+    return (
+      <button
+        onClick={() => {
+          profileAtom.set({
+            firstName: "Mathieu",
+            lastName: "Acthernoene",
+          });
+        }}
+      >
+        update profile
+      </button>
+    );
+  };
+
+  const { getByText } = render(<Counter />);
+
+  fireEvent.click(getByText("update profile"));
+  expect(renderCount).toBe(2);
+});
+
+it("can avoid re-render when a custom isEqual is provided", async () => {
+  const profileAtom = atom({
+    firstName: "Mathieu",
+    lastName: "Acthernoene",
+  });
+
+  let renderCount = 0;
+
+  const Counter = () => {
+    useAtom(
+      profileAtom,
+      (prevValue, nextValue) =>
+        `${prevValue.firstName} ${prevValue.lastName}` ===
+        `${nextValue.firstName} ${nextValue.lastName}`,
+    );
+
+    renderCount++;
+
+    return (
+      <button
+        onClick={() => {
+          profileAtom.set({
+            firstName: "Mathieu",
+            lastName: "Acthernoene",
+          });
+        }}
+      >
+        update profile
+      </button>
+    );
+  };
+
+  const { getByText } = render(<Counter />);
+
+  fireEvent.click(getByText("update profile"));
+  expect(renderCount).toBe(1);
 });
