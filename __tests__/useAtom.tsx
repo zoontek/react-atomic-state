@@ -24,42 +24,33 @@ it("performs a basic example", async () => {
 
 it("only re-renders if value has changed", async () => {
   const countAtom = atom(0);
-
-  let counterRenderCount = 0;
-  let controlRenderCount = 0;
+  let renderCount = 0;
 
   const Counter = () => {
     const count = useAtom(countAtom);
-    counterRenderCount++;
-    return <div>count: {count}</div>;
-  };
-
-  const Control = () => {
-    controlRenderCount++;
+    renderCount++;
 
     return (
-      <button
-        onClick={() => {
-          countAtom.set((prevCount) => prevCount + 1);
-        }}
-      >
-        button
-      </button>
+      <>
+        <div>count: {count}</div>
+
+        <button
+          onClick={() => {
+            countAtom.set((prevCount) => prevCount + 1);
+          }}
+        >
+          button
+        </button>
+      </>
     );
   };
 
-  const { getByText, findByText } = render(
-    <>
-      <Counter />
-      <Control />
-    </>,
-  );
+  const { getByText, findByText } = render(<Counter />);
 
   fireEvent.click(getByText("button"));
   await findByText("count: 1");
 
-  expect(counterRenderCount).toBe(2);
-  expect(controlRenderCount).toBe(1);
+  expect(renderCount).toBe(2);
 });
 
 it("can be reset", async () => {
