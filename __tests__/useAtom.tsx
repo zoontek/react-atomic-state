@@ -8,13 +8,11 @@ afterEach(cleanup);
 it("performs a basic example", async () => {
   const countAtom = atom(0);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
-
   const Counter = () => {
     const count = useAtom(countAtom);
 
     React.useEffect(() => {
-      increment();
+      countAtom.set((prevCount) => prevCount + 1);
     }, []);
 
     return <div>count: {count}</div>;
@@ -27,8 +25,6 @@ it("performs a basic example", async () => {
 it("only re-renders if value has changed", async () => {
   const countAtom = atom(0);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
-
   let counterRenderCount = 0;
   let controlRenderCount = 0;
 
@@ -40,7 +36,16 @@ it("only re-renders if value has changed", async () => {
 
   const Control = () => {
     controlRenderCount++;
-    return <button onClick={increment}>button</button>;
+
+    return (
+      <button
+        onClick={() => {
+          countAtom.set((prevCount) => prevCount + 1);
+        }}
+      >
+        button
+      </button>
+    );
   };
 
   const { getByText, findByText } = render(
@@ -60,15 +65,21 @@ it("only re-renders if value has changed", async () => {
 it("can be reset", async () => {
   const countAtom = atom(0);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
-
   const Counter = () => {
     const count = useAtom(countAtom);
 
     return (
       <>
         <div>count: {count}</div>
-        <button onClick={increment}>increment</button>
+
+        <button
+          onClick={() => {
+            countAtom.set((prevCount) => prevCount + 1);
+          }}
+        >
+          increment
+        </button>
+
         <button onClick={countAtom.reset}>reset</button>
       </>
     );
@@ -86,15 +97,13 @@ it("can be reset", async () => {
 it("can batch updates", async () => {
   const countAtom = atom(0);
 
-  const increment = () => countAtom.set((prevCount) => prevCount + 1);
-
   const Counter = () => {
     const count = useAtom(countAtom);
 
     React.useEffect(() => {
       ReactDOM.unstable_batchedUpdates(() => {
-        increment();
-        increment();
+        countAtom.set((prevCount) => prevCount + 1);
+        countAtom.set((prevCount) => prevCount + 1);
       });
     }, []);
 
