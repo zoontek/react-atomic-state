@@ -51,7 +51,7 @@ export function useAtom<Value>(
   return useSyncExternalStoreWithSelector(
     atom.subscribe,
     atom.get,
-    undefined,
+    atom.get,
     identity,
     isEqual,
   );
@@ -68,7 +68,7 @@ export function useAtomWithSelector<Value, Selection>(
   return useSyncExternalStoreWithSelector(
     atom.subscribe,
     atom.get,
-    undefined,
+    atom.get,
     selector,
     isEqual,
   );
