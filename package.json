@@ -1,6 +1,6 @@
 {
   "name": "react-atomic-state",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "license": "MIT",
   "description": "Dead simple React global state management based on use-sync-external-store",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
@@ -42,7 +42,7 @@
     "react": ">=16.8.0"
   },
   "dependencies": {
-    "use-sync-external-store": "1.0.0-rc.2 || ^1.0.0"
+    "use-sync-external-store": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.17.8",
