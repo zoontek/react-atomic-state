@@ -1,6 +1,7 @@
 import { cleanup, fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { afterEach, expect, it } from "vitest";
 import { atom, useAtom } from "../src";
 
 afterEach(cleanup);

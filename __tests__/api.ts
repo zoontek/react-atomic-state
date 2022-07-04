@@ -1,10 +1,11 @@
+import { expect, it, vi } from "vitest";
 import { atom } from "../src";
 
 it("matches existing api", () => {
   const nullAtom = atom(null);
 
   expect(nullAtom).toMatchInlineSnapshot(`
-    Object {
+    {
       "get": [Function],
       "reset": [Function],
       "set": [Function],
@@ -29,7 +30,7 @@ it("performs get / set / reset", () => {
 
 it("subscribes to atom value changes", () => {
   const countAtom = atom(0);
-  const callback = jest.fn();
+  const callback = vi.fn();
 
   countAtom.subscribe(callback);
 
