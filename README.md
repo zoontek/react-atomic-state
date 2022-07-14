@@ -1,8 +1,10 @@
 # ⚛️ react-atomic-state
 
-[![bundlephobia](https://badgen.net/bundlephobia/minzip/react-atomic-state)](https://bundlephobia.com/result?p=react-atomic-state) [![npm version](https://badge.fury.io/js/react-atomic-state.svg)](https://www.npmjs.com/package/react-atomic-state) [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
-
 Dead simple React global state management based on [`use-sync-external-store`](https://github.com/facebook/react/tree/master/packages/use-sync-external-store).
+
+[![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-atomic-state/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/valienv?style=for-the-badge)](https://www.npmjs.org/package/react-atomic-state)
+[![bundlephobia](https://img.shields.io/bundlephobia/minzip/react-atomic-state?label=size&style=for-the-badge)](https://bundlephobia.com/result?p=valienv)
 
 ## Installation
 
