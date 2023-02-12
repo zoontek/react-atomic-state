@@ -13,15 +13,6 @@ export type Atom<Value> = {
   reset: () => void;
 };
 
-// For server-side rendering: https://github.com/pmndrs/zustand/pull/34
-// Deno support: https://github.com/pmndrs/zustand/issues/347
-const isSSR =
-  typeof window === "undefined" ||
-  !window.navigator ||
-  /ServerSideRendering|^Deno\//.test(window.navigator.userAgent);
-
-const useIsoLayoutEffect = isSSR ? useEffect : useLayoutEffect;
-
 export function atom<Value>(initialValue: Value): Atom<Value> {
   const callbacks = new Set<(value: Value) => void>();
   let currentValue: Value = initialValue;
@@ -58,6 +49,15 @@ export function atom<Value>(initialValue: Value): Atom<Value> {
 export function useAtom<Value>(atom: Atom<Value>): Value {
   return useSyncExternalStore(atom.subscribe, atom.get, atom.get);
 }
+
+// For server-side rendering: https://github.com/pmndrs/zustand/pull/34
+// Deno support: https://github.com/pmndrs/zustand/issues/347
+const isSSR =
+  typeof window === "undefined" ||
+  !window.navigator ||
+  /ServerSideRendering|^Deno\//.test(window.navigator.userAgent);
+
+const useIsoLayoutEffect = isSSR ? useEffect : useLayoutEffect;
 
 export function useAtomWithSelector<Value, Selection>(
   atom: Atom<Value>,
