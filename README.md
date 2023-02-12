@@ -17,7 +17,7 @@ $ yarn add react-atomic-state
 ## ❓Motivation
 
 I'm a **huge** fan of the _"state and props"_ couple, but sometimes I need to share a simple value to my entire application.<br />
-I don't like the `Context` API and existing global state management libraries (overkill to me most of the times). So I decided to publish this small library to cover this specific need 🙌.
+As I'm not a fan of the `Context` API and found existing global state management libraries overkill to me most of the times, I decided to publish this small library to cover this specific need 🙌.
 
 ## Usage
 
@@ -38,6 +38,7 @@ const unsubscribe = count.subscribe((value) => {
 export const useCount = () => useAtom(count);
 
 // create a custom hook with selector
+// (not to create a complex object store - it's often better to create multiple atoms, but to derive data)
 export const useStringCount = () =>
   useAtomWithSelector(count, (count) => count.toString());
 ```
