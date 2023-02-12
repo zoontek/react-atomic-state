@@ -85,7 +85,7 @@ type useAtom = <Value>(
 ### useAtomWithSelector()
 
 ```ts
-type useAtom = <Value, Selection>(
+type useAtomWithSelector = <Value, Selection>(
   atom: Atom<Value>,
   selector: (value: Value) => Selection,
   isEqual?: (prevSelection: Selection, nextSelection: Selection) => boolean,
