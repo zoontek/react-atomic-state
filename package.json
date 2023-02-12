@@ -44,21 +44,17 @@
     "trailingComma": "all"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
-  },
-  "dependencies": {
-    "use-sync-external-store": "^1.2.0"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^12.1.5",
-    "@types/react": "^17.0.53",
-    "@types/react-dom": "^17.0.18",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@testing-library/react": "^13.4.0",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.10",
     "jsdom": "^21.1.0",
     "microbundle": "^0.15.1",
     "prettier": "^2.8.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^4.9.5",
     "vitest": "^0.28.4"
   }
