@@ -1,8 +1,8 @@
 {
   "name": "react-atomic-state",
-  "version": "1.2.7",
+  "version": "2.0.0",
   "license": "MIT",
-  "description": "Dead simple React global state management based on use-sync-external-store",
+  "description": "Dead simple React global state management based on useSyncExternalStore",
   "author": "Mathieu Acthernoene <zoontek@gmail.com>",
   "homepage": "https://github.com/zoontek/react-atomic-state#readme",
   "repository": {
@@ -31,9 +31,10 @@
     "clean": "rm -rf dist",
     "dev": "microbundle watch",
     "format": "prettier '**/*' -u -w",
-    "prepack": "yarn test && yarn build",
     "test": "vitest --run",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "typecheck": "tsc --noEmit",
+    "prepack": "yarn typecheck && yarn test && yarn build"
   },
   "browserslist": [
     ">0.2%",
@@ -44,22 +45,18 @@
     "trailingComma": "all"
   },
   "peerDependencies": {
-    "react": ">=16.8.0"
-  },
-  "dependencies": {
-    "use-sync-external-store": "^1.2.0"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^12.1.5",
-    "@types/react": "^17.0.53",
-    "@types/react-dom": "^17.0.18",
-    "@types/use-sync-external-store": "^0.0.3",
-    "jsdom": "^21.1.0",
+    "@testing-library/react": "^14.1.2",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.17",
+    "jsdom": "^23.0.1",
     "microbundle": "^0.15.1",
-    "prettier": "^2.8.4",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "typescript": "^4.9.5",
-    "vitest": "^0.28.4"
+    "prettier": "^3.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
   }
 }

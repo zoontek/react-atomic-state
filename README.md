@@ -1,6 +1,6 @@
 # ⚛️ react-atomic-state
 
-Dead simple React global state management based on [`use-sync-external-store`](https://github.com/facebook/react/tree/master/packages/use-sync-external-store).
+Dead simple React global state management based on [`useSyncExternalStore`](https://react.dev/reference/react/useSyncExternalStore).
 
 [![mit licence](https://img.shields.io/dub/l/vibe-d.svg?style=for-the-badge)](https://github.com/zoontek/react-atomic-state/blob/main/LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-atomic-state?style=for-the-badge)](https://www.npmjs.org/package/react-atomic-state)
