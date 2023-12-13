@@ -1,6 +1,4 @@
-import { useCallback, useRef, useSyncExternalStore } from "react";
-
-const UNSET = Symbol.for("unset");
+import { useSyncExternalStoreWithSelector } from "use-sync-external-store/shim/with-selector";
 
 export type Atom<Value> = {
   get: () => Value;
@@ -8,27 +6,6 @@ export type Atom<Value> = {
   subscribe: (callback: (value: Value) => void) => () => void;
   reset: () => void;
 };
-
-function useSyncExternalStoreWithSelector<Snapshot, Selection>(
-  subscribe: (onStoreChange: () => void) => () => void,
-  getSnapshot: () => Snapshot,
-  selector: (snapshot: Snapshot) => Selection,
-  isEqual: (prevSelection: Selection, nextSelection: Selection) => boolean,
-): Selection {
-  const ref = useRef<Selection | typeof UNSET>(UNSET);
-
-  const getSelection = useCallback((): Selection => {
-    const selection = selector(getSnapshot());
-
-    if (ref.current === UNSET || !isEqual(ref.current, selection)) {
-      ref.current = selection;
-    }
-
-    return ref.current;
-  }, [getSnapshot, selector, isEqual]);
-
-  return useSyncExternalStore(subscribe, getSelection, getSelection);
-}
 
 export function atom<Value>(initialValue: Value): Atom<Value> {
   const callbacks = new Set<(value: Value) => void>();
@@ -74,6 +51,7 @@ export function useAtom<Value>(
   return useSyncExternalStoreWithSelector(
     atom.subscribe,
     atom.get,
+    atom.get,
     identity,
     isEqual,
   );
@@ -89,6 +67,7 @@ export function useAtomWithSelector<Value, Selection>(
 ): Selection {
   return useSyncExternalStoreWithSelector(
     atom.subscribe,
+    atom.get,
     atom.get,
     selector,
     isEqual,
